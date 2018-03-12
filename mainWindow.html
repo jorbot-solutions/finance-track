@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Finance Track</title>
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="main.css" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+	
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row mt-15">
+			<div class="col-sm-12">
+				<div class="jumbotron mt-15"><h2>Finance Track</h2>Stay in the BLACK!</div>
+			</div>
+		</div>
+		
+		<!-- current debit with convenient transaction button using fa-minus -->
+		<div class="row mt-20">
+			<div class="col-sm-4" id="debit_wrapper">
+				<div class="input-group form-group">
+					<span class="input-group-addon" id="debit_label">Debit</span>
+					<span class="input-group-addon fa fa-dollar"></span>
+					<input id="debit_view" class="form-control">
+					<span class="input-group-addon fa fa-minus btn btn-primary"></span>
+				</div>
+			</div>
+		</div>
+		
+		<!-- navigation pane for selecting current view which load into the content_main div -->
+		<div class="row mt-15">
+			<div class="col-sm-12">
+				<ul class="nav nav-pills">
+					<li><a href="#" onclick="$('#content_main').load('credits.html');">Credits</a></li>
+					<li><a href="#" onclick="$('#content_main').load('expenses.html');">Expenses</a></li>
+					<!--li><a href="#" onclick="$('#content_main').load('review.html');">Review</a></li-->
+					<li><a href="#" onclick="$('#content_main').load('routes.html');">Routing Numbers</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<!-- displays desired content -->
+		<div id="content_main"></div>
+	</div>
+	
+	<script>
+		const electron = require('electron'),
+			{ipcRenderer} = electron,
+			ul = document.querySelector('ul'),
+			fs = require('fs'),
+			path = require('path');
+		
+		// deposit funds
+		ipcRenderer.on('deposit:add', function(ev, deposit){
+			
+			const prevDebit = $("#debit_view").html() === '' ? 0 : $("#debit_view").html();
+			let newDebit = parseFloat(prevDebit) + parseFloat(deposit);
+			
+			$("#debit_view").html(newDebit.toFixed(2));
+			
+			fs.writeFile("debit.json", JSON.stringify({"debit":newDebit.toFixed(2)}), "utf-8", (error) => {error === null ? console.log('file written successfully') : console.log(error)});
+							
+			writeTransaction("deposit", deposit);
+		});
+		
+		// withdraw funds
+		ipcRenderer.on('withdraw:add', function(ev, withdraw){
+			const prevDebit = $("#debit_view").html() === '' ? 0 : $("#debit_view").html();
+			let newDebit = parseFloat(prevDebit) - parseFloat(withdraw);
+			
+			$("#debit_view").html(newDebit.toFixed(2));
+			
+			fs.writeFile("debit.json", JSON.stringify({"debit":newDebit.toFixed(2)}), "utf-8", (error) => {error === null ? console.log('file written successfully') : console.log(error)});
+			
+			writeTransaction("withdrawal", withdraw);
+		});
+		
+		// add credit
+		ipcRenderer.on('credit:add', function(ev, credit){			
+			fs.appendFile("credits.json", JSON.stringify(credit), "utf-8", (error) => {error === null ? console.log('file written successfully') : console.log(error)});
+			$("a{Credits}").click();
+			//writeTransaction("withdrawal", withdraw);
+		});
+		
+		// write a transaction log for viewing history
+		function writeTransaction(type, amount){
+			const date = new Date(),
+				year = date.getFullYear(),
+				month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
+				day = (date.getDate() + 1) < 10 ? "0" + (date.getDate() + 1) : date.getDate() + 1,
+				hour = date.getHours() + 1,
+				minutes = date.getMinutes() + 1,
+				seconds = date.getSeconds() + 1;
+			
+			let transactions = {
+				"date": year+"-"+month+"-"+day,
+				"time": hour+":"+minutes+":"+seconds,
+				"type": type,
+				"amount": amount
+			}
+			
+			fs.appendFile("transactions.json", JSON.stringify(transactions), "utf-8", (error) => {error === null ? console.log("file written successfully") : console.log(error)});
+		}
+		
+		// clear items
+		ipcRenderer.on('deposit:clear', function(){
+			ul.innerHTML = '';
+		});
+		
+		// mark pill as active
+		$(".nav li").on("click", function(e){
+			e.preventDefault();
+			$(".nav li").removeClass("active");
+			$(this).addClass("active");
+		});
+		
+		function removeItem(e){
+			e.target.remove();
+		}
+		
+		// get deposit data
+		$.getJSON("debit.json", function(data){
+			$("#debit_view").val(data.debit);
+		});
+		
+		// load credits on app load
+		$('#content_main').load('credits.html');
+		
+	</script>
+</body>
+</html>

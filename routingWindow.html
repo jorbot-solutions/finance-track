@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Routing Numbers</title>
+	
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="main.css" type="text/css">
+	
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script src="assets/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+	<form>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label>Enter Routing Number</label>
+				<div class="input-group">
+					<input class="form-control" type="text" id="route" autofocus>
+					<span class="input-group-addon btn" id="add_route">Save</span>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+	<script>
+	
+		const app = require('electron'),
+			remote = ('remote'),
+			dialog = remote.dialog,
+			{ipcRenderer} = app,
+			fs = require('fs'),
+			path = require('path');
+		//const renderer = require('assets/js/renderer.js');
+		
+		const form = document.querySelector('form');
+		//form.addEventListener('submit', submitForm);
+		
+		// send to mainWindow via main.js
+		$("#add_route").on("click", function(ev){
+			ev.preventDefault();
+			const route = {"number": $("#route").val()}
+			fs.appendFile("routes.json", JSON.stringify(route), "utf-8", (error) => {error === null ? console.log("file written successfully") : console.log(error)});
+		});
+		
+		
+	</script>
+</body>
+
+</html>

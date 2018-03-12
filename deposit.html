@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Add Deposit</title>
+	
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="main.css" type="text/css">
+	
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script src="assets/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<form>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label>Enter Deposit</label>
+				<div class="input-group">
+					<input class="form-control" type="text" id="deposit" autofocus>
+					<span class="input-group-addon btn" id="add_deposit">Save</span>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+	<script>
+	
+		const app = require('electron'),
+			remote = ('remote'),
+			dialog = remote.dialog,
+			{ipcRenderer} = app;
+		//const renderer = require('assets/js/renderer.js');
+		
+		const form = document.querySelector('form');
+		//form.addEventListener('submit', submitForm);
+		
+		// send to mainWindow via main.js
+		$("#add_deposit").on("click", function(ev){
+			ev.preventDefault();
+			ipcRenderer.send('deposit:add', $('#deposit').val());
+		});
+		
+	</script>
+	
+</body>
+</html>

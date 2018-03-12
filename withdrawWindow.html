@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Withdraw Funds</title>
+	
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="main.css" type="text/css">
+	
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script src="assets/js/bootstrap.min.js"></script>
+</head>
+<body>
+	
+	<form>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label>Enter Withdrawal Amount</label>
+				<div class="input-group">
+					<input class="form-control" type="text" id="withdraw" autofocus>
+					<span class="input-group-addon btn" id="withdraw_funds">Save</span>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+	<script>
+	
+		const app = require('electron'),
+			remote = ('remote'),
+			dialog = remote.dialog,
+			{ipcRenderer} = app;
+		
+		// send to mainWindow via main.js
+		$("#withdraw_funds").on("click", function(ev){
+			ev.preventDefault();
+			ipcRenderer.send('withdraw:add', $('#withdraw').val());
+		});
+		
+	</script>
+	
+</body>
+</html>

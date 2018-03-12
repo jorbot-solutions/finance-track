@@ -1,0 +1,46 @@
+/* finance track main.css */
+
+.mt-15{
+	margin-top: 15px !important;
+}
+
+.mt-20{
+	margin-top: 20px !important;
+}
+
+.jumbotron{
+	padding: 0px !important;
+	border-radius: 0 !important;
+	margin: 0 !important;
+	background: white;
+	text-decoration: underline;
+}
+
+.jumbotron h2{
+	font-size: 36px;
+}
+
+#debit_view{
+	/*background-color: black;*/
+	color: black;
+	font-weight: bold;
+	padding: 5px;
+}
+
+#debit_view,[for="debit_view"]{
+	font-size: 18px;
+}
+
+ul.nav li a{
+	border-radius: 0px !important;
+}
+
+.input-group-addon input[type="submit"]{
+	background: transparent;
+	border: none;
+}
+
+/* bootstrap override */
+
+.btn{
+}

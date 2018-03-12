@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Add Credit Window</title>
+	
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="main.css" type="text/css">
+	
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script>require('jquery-ui');</script>
+	<script src="assets/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<!-- provide inputs for credit -->
+	<form>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input type="text" name="" id="name" class="form-control">
+				<label for="balance">Balance</label>
+				<input type="text" name="" id="balance" class="form-control">
+				<label for="payment">Payment</label>
+				<input type="text" name="" id="payment" class="form-control">
+				<label for="due_date">Due Date</label>
+				<input type="text" name="" id="due_date" class="form-control">
+				<hr>
+				<button id="add_credit" class="btn btn-md">Save</button>
+			</div>
+		</div>
+	</form>
+	
+	<script>
+	
+		const app = require('electron'),
+			remote = ('remote'),
+			dialog = remote.dialog,
+			{ipcRenderer} = app;
+		//const renderer = require('assets/js/renderer.js');
+		
+		const form = document.querySelector('form');
+		//form.addEventListener('submit', submitForm);
+		
+		// send to mainWindow via main.js
+		$("#add_credit").on("click", function(ev){
+			ev.preventDefault();
+			let credit = {
+				"name":$("#name").val(),
+				"balance":$("#balance").val(),
+				"payment":$("#payment").val(),
+				"due_date":$("#due_date").val()
+			}
+			ipcRenderer.send('credit:add', credit);
+		});
+		
+		$("#due_date").datepicker();
+		
+	</script>
+</body>
+</html>
